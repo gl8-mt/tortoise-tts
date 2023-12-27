@@ -495,7 +495,13 @@ class TextToSpeech:
                                 return_latent=True, clip_inputs=False)
             if verbose:
                 print("generating audio..")
-            wav_gen = self.hifi_decoder.inference(gpt_latents.to(self.device), auto_conditioning)
+            t_list = []
+            for i in range(100):
+                t0 = time()
+                wav_gen = self.hifi_decoder.inference(gpt_latents.to(self.device), auto_conditioning)
+                et = time() - t0
+                t_list.append(et)
+            print('avg/min/max:', np.mean(t_list), np.min(t_list), np.max(t_list))
             return wav_gen
     def deterministic_state(self, seed=None):
         """
